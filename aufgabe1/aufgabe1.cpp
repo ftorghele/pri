@@ -21,15 +21,11 @@ int main() {
     std::srand((unsigned)time(0));
 
     intlist a, b, c;
-    intlist lists[3];
+    intlist lists[3] = {a, b, c};
 
-    fill_list(a);
-    fill_list(b);
-    fill_list(c);
-
-    lists[0] = a;
-    lists[1] = b;
-    lists[2] = c;
+    for(unsigned int i = 0; i < 3; i++) {
+        fill_list(lists[i]);
+    }
 
     std::cout << "Lists which should be merged together:" << std::endl;
     for(unsigned int i = 0; i < 3; i++) {
