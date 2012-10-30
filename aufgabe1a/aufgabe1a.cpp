@@ -59,10 +59,10 @@ int main() {
 
     std::cout << "Uebung 1.3:" << std::endl << std::endl;
 
-    Tree tree;
-    AvlTree avltree;
+    Tree<int> tree;
+    AvlTree<int> avltree;
 
-    for(unsigned runns = 1; runns <= 5; runns++) {
+    for(unsigned runns = 1; runns <= 10; runns++) {
         for(unsigned i = 0; i < 10000; i++) {
             unsigned randNumber = std::rand()%100000;
             tree.insert(randNumber);

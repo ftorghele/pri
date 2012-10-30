@@ -1,8 +1,4 @@
 class Number {
-    friend std::ostream& operator<<(std::ostream& output, const Number &o) {
-        output << o.number;
-        return output;
-    }
     public:
         Number() : number(0){}
         Number(float _n) : number(_n) {}
@@ -12,4 +8,9 @@ class Number {
         }
 
         float number;
+
+    friend std::ostream& operator<<(std::ostream& output, const Number &o) {
+        output << o.number;
+        return output;
+    }
 };

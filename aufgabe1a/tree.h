@@ -1,9 +1,10 @@
 #include <stdio.h>
 
+template<typename T>
 class Tree {
     public:
         Tree() : root(0) { }
-        void insert(double d) {
+        void insert(T d) {
             if (!root) root = new Node(d);
             else insert(root, d);
         }
@@ -17,8 +18,8 @@ class Tree {
         }
     private:
         struct Node {
-            Node(double d) : data(d), left(0), right(0) { }
-            double data;
+            Node(T d) : data(d), left(0), right(0) { }
+            T data;
             Node *left, *right;
         };
         void print(Node *node) const {
@@ -31,7 +32,7 @@ class Tree {
             if (!node) return 0;
             return 1 + std::max(height(node->left), height(node->right));
         }
-        void insert(Node* &node, double d) {
+        void insert(Node* &node, T d) {
             if (!node) node = new Node(d);
             if (d < node->data) insert(node->left, d);
             else if (d > node->data) insert(node->right, d);

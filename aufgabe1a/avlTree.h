@@ -1,7 +1,8 @@
+template<typename T>
 class AvlTree {
     public:
         AvlTree() : root(0) { }
-            void insert(double d) {
+            void insert(T d) {
                 if (!root) root = new AvlNode(d);
                 else insert(root, d);
             }
@@ -15,8 +16,8 @@ class AvlTree {
             }
     private:
         struct AvlNode {
-            AvlNode(double d) : data(d), left(0), right(0) { }
-            double data;
+            AvlNode(T d) : data(d), left(0), right(0) { }
+            T data;
             AvlNode *left, *right;
         };
 
@@ -55,7 +56,7 @@ class AvlTree {
             rotate_right(node);
         }
 
-        void insert(AvlNode* &node, double d) {
+        void insert(AvlNode* &node, T d) {
             if (!node) node = new AvlNode(d);
             if (d < node->data) {
                 insert(node->left, d);
