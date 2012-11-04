@@ -1,6 +1,8 @@
 */.autotools
 */.project
 */.cproject
+*/*/.project
+*/*/.cproject
 .metadata/*
-*/aufgabe?
+*/.metadata/*
 */*.cbp

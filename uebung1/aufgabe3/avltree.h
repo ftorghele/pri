@@ -1,19 +1,36 @@
+/*
+ * avltree.h
+ *
+ *  Created on: Okt 29, 2012
+ *      Author: torghele
+ */
+
+#ifndef AVLTREE_H_
+#define AVLTREE_H_
+
+#include <cstdlib>
+#include <cstdio>
+#include <algorithm>
+
 template<typename T>
 class AvlTree {
     public:
         AvlTree() : root(0) { }
-            void insert(T d) {
-                if (!root) root = new AvlNode(d);
-                else insert(root, d);
-            }
+        ~AvlTree() {
+        	cleanup(root);
+        }
 
-            void print() const {
-                print(root);
-            }
+		void insert(T d) {
+			if (!root) root = new AvlNode(d);
+			else insert(root, d);
+		}
+		void print() const {
+			print(root);
+		}
 
-            unsigned height() const {
-                return height(root);
-            }
+		unsigned height() const {
+			return height(root);
+		}
     private:
         struct AvlNode {
             AvlNode(T d) : data(d), left(0), right(0) { }
@@ -57,24 +74,34 @@ class AvlTree {
         }
 
         void insert(AvlNode* &node, T d) {
-            if (!node) node = new AvlNode(d);
-            if (d < node->data) {
-                insert(node->left, d);
-                if (height(node->left) - height(node->right) == 2) {
-                    if (d < node->left->data)
-                        rotate_right(node);
-                    else
-                        rotate_left_right(node);
-                }
-            } else if (d > node->data) {
-                insert(node->right, d);
-                if (height(node->right) - height(node->left) == 2) {
-                    if (d > node->right->data)
-                        rotate_left(node);
-                    else
-                        rotate_right_left(node);
-                }
-            }
-        }
+			if (!node) node = new AvlNode(d);
+
+			if (d < node->data) {
+				insert(node->left, d);
+
+				if (height(node->left) - height(node->right) == 2) {
+					if (d < node->left->data) rotate_right(node);
+					else rotate_left_right(node);
+				}
+			}
+			else if (d > node->data) {
+				insert(node->right, d);
+
+				if (height(node->right) - height(node->left) == 2) {
+					if (d > node->right->data) rotate_left(node);
+					else rotate_right_left(node);
+				}
+			}
+		}
+
+        void cleanup(AvlNode *node) {
+			if (!node) return;
+			cleanup(node->left);
+			cleanup(node->right);
+			delete node;
+		}
+
         AvlNode *root;
 };
+
+#endif /* AVLTREE_H */

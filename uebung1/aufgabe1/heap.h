@@ -1,3 +1,13 @@
+/*
+ * Heap.h
+ *
+ *  Created on: Okt 29, 2012
+ *      Author: torghele
+ */
+
+#ifndef HEAP_H_
+#define HEAP_H_
+
 #include <cassert>
 #include <algorithm>
 
@@ -98,3 +108,5 @@ class Heap {
                 return 1;
         }
 };
+
+#endif /* HEAP_H */

@@ -1,9 +1,24 @@
-#include <stdio.h>
+/*
+ * tree.h
+ *
+ *  Created on: Okt 29, 2012
+ *      Author: torghele
+ */
+
+#ifndef TREE_H_
+#define TREE_H_
+
+#include <cstdlib>
+#include <cstdio>
+#include <algorithm>
 
 template<typename T>
 class Tree {
     public:
         Tree() : root(0) { }
+        ~Tree() {
+        	cleanup(root);
+        }
         void insert(T d) {
             if (!root) root = new Node(d);
             else insert(root, d);
@@ -37,5 +52,14 @@ class Tree {
             if (d < node->data) insert(node->left, d);
             else if (d > node->data) insert(node->right, d);
         }
+        void cleanup(Node *node) {
+			if (!node) return;
+			cleanup(node->left);
+			cleanup(node->right);
+			delete node;
+		}
+
         Node *root;
 };
+
+#endif /* TREE_H */
