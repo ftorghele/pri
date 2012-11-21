@@ -37,7 +37,7 @@ void server()
 		exit(1);
 	}
 
-	if (listen(s, 5) == -1) { // max 5 connections
+	if (listen(s, 5) == -1) { // max 5 connections in queue
 		cerr << strerror(errno) << endl;
 		exit(1);
 	}

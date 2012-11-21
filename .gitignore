@@ -1,6 +1,9 @@
 */.autotools
 */.project
 */.cproject
+*.md~
+*/*.md~
+*/*/*.md~
 */*/.project
 */*/.cproject
 .metadata/*

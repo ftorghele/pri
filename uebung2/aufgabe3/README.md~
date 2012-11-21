@@ -1,3 +1,0 @@
-__Wo wird Interprozesskommunikation praktisch eingesetzt? Und warum? Was sind die Vorteile? Am besten Sie beschreiben die Architektur eines Open-Source Projekt, dass Interprozesskommunikation verwendet.__
-
-Multi-Process Webserver verwenden IPC für die Kommunikation zwischen Parent und Child/Worker Prozessen. Der Parent-Prozess nimmt einen HTTP-Request entgegen, verarbeitet ihn aber nicht selber. Der Request wird an einen Worker-Prozessen weitergegeben. Im Falle von Apache MPM Prefork bassiert dies mittels Shared Memory. Der Vorteil liegt darin, dass der Request nicht im Momory dupliziert werden muss und somit die Memory-Auslastund des Webservers niedrig gehalten werden kann.
