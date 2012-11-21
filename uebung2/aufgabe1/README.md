@@ -57,12 +57,15 @@ Um dieses Problem zu umgehen werden mehrstufige Page-Tabellen verwendet. Adressb
 __(d) Lesen Sie Kapitel 6.2, 6.2.1 (bis Seite 51) und probieren Sie den angegeben Code zur Matrix-Multiplikation aus. Messen Sie mit gettimeofday() und vergleichen Sie das Ergebnis mit dem Artikel. Was versteht man unter locality. Was versteht man unter alignment?__
 
 __Code/Time Vergleich:__
-* 1: 12249180 ms
-* 2:  3389971 ms
-* 3:  1093306 ms
+* time used (original):	 	12183 ms
+* time used (transposed):	 3367 ms
+* time used (sub-matrix):	 1051 ms
 
 __Locality:__
 Unter Locality versteht man, ob alle Daten, die für die Berechnung benötigt werden zum Beispiel in den L1-Cache des Prozessors passen oder nicht. Umso besser die Locality ist, umso schneller wird das Programm.
+
+* Spatial Locality: weitere Zugriffe in der Nähe wahrscheinlich
+* Temporal Locality: weitere Zugriffe in naher Zukunft wahrscheinlich
 
 __Alignment:__
 Unter Alignment versteht man, ob zum Beispiel eine Variable in eine einzige Cache-Line passt oder über mehrere verteilt ist.
