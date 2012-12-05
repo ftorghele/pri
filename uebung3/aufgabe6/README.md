@@ -10,9 +10,7 @@ __Berechnen Sie unter Annahme von 64-bit Adressen die folgenden Werte fur einen 
 > - __tag =__ 64bit - 6bit (offset) - 9bit (index) = __49bit__
 
 - Anzahl der sets im Cache
-> - Cachegröße = Assoziativität * sets * Cacheline Größe
-> - 256*1024 = 8 * sets * 4096
-> - __sets = 8__
+> - __sets =__ 4096 (cache lines) / 8 (8-fach assoziativ) = __512__
 
 - Anzahl der cache lines im Cache
 > - siehe oben
