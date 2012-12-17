@@ -10,31 +10,39 @@
 #ifndef WRITEPOLICY_H_
 #define WRITEPOLICY_H_
 
-#include <iostream>
+#include <exception>
+using namespace std;
 
-class WriteExceptionPolicy {
-protected:
-	template<typename T>
-	static void write(T &value) {
-		// Todo: implement
+class WriteErrorException : public exception {
+	virtual const char* what() const throw () {
+		return "write error";
 	}
+} WriteErrorException;
+
+struct WriteErrorPolicyIgnore
+{
+    static bool HANDLE_ERROR()
+    {
+        return true;
+    }
 };
 
-class WriteOverwritePolicy {
-protected:
-	template<typename T>
-	static void write(T &value) {
-		// Todo: implement
-	}
+
+struct WriteErrorPolicyOverwrite
+{
+    static bool HANDLE_ERROR()
+    {
+        return false;
+    }
 };
 
-class WriteIgnorePolicy {
-protected:
-	template<typename T>
-	static void write(T &value) {
-		// Todo: implement
 
-	}
+struct WriteErrorPolicyException
+{
+    static bool HANDLE_ERROR()
+    {
+        throw WriteErrorException;
+    }
 };
 
 #endif /* WRITEPOLICY_H_ */

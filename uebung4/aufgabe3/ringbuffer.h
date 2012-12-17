@@ -16,12 +16,16 @@
 #include "readpolicy.h"
 #include "writepolicy.h"
 
-template<class T, typename WritePolicy, typename ReadPolicy>
-class RingBuffer: private WritePolicy, private ReadPolicy {
+template <
+    typename T,
+    typename ReadErrorPolicy = ReadErrorPolicyDefaultValue<T>,
+    typename WriteErrorPolicy = WriteErrorPolicyIgnore
+>
+class RingBuffer: private ReadErrorPolicy, private WriteErrorPolicy {
 
 public:
 
-	RingBuffer(unsigned n = DEFAULT_SIZE) : size(n), start(0), end(0) {
+	RingBuffer(unsigned n = DEFAULT_SIZE) : size(n), start(0), end(0), currentSize(0) {
 		data = new T[size];
 	}
 
@@ -31,11 +35,10 @@ public:
 
 	RingBuffer(const RingBuffer &o) {
 
-		delete[] data;
-
 		start = o.start;
 		end = o.end;
 		size = o.size;
+		currentSize = o.currentSize;
 
 		data = new T[size];
 
@@ -52,6 +55,7 @@ public:
 		start = o.start;
 		end = o.end;
 		size = o.size;
+		currentSize = o.currentSize;
 
 		data = new T[size];
 
@@ -63,34 +67,59 @@ public:
 
 	}
 
-	void moveStart() {
-		(start + 1 < size) ? start += 1 : start = 0;
-		//TODO handling start == end
-	}
-
-	void moveEnd() {
-		(end + 1 < size) ? end += 1 : end = 0;
-		//TODO handling start == end
+	void clear() {
+		start = end = currentSize = 0;
 	}
 
 	unsigned getSize() {
-		return size;
+		return currentSize;
+	}
+
+	void increment_tail() {
+	  ++end;
+	  ++currentSize;
+	  if (end == size) end = 0;
+	}
+	void increment_head(){
+	  ++start;
+	  --currentSize;
+	  if (start == size) start = 0;
 	}
 
 	T read() {
-		return ReadPolicy::read(data, start, end);
+		if (!currentSize) {
+			return ReadErrorPolicy::HANDLE_ERROR();
+		} else {
+			T value = data[start];
+			increment_head();
+			return value;
+		}
 	}
 
-	void write(T &value) {
-		WritePolicy::write(value);
+	void write(T value) {
+		if (!currentSize) {
+			data[start] = value;
+			end = start;
+			++currentSize;
+		} else if (currentSize != size) {
+			increment_tail();
+			data[end] = value;
+		} else {
+
+			if (WriteErrorPolicy::HANDLE_ERROR()) return;
+			increment_head();
+			increment_tail();
+			data[end] = value;
+		}
 	}
 
 private:
 
 	unsigned size;
-	T *data;
+	unsigned currentSize;
 	unsigned start;
 	unsigned end;
+	T *data;
 
 };
 

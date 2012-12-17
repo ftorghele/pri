@@ -11,25 +11,31 @@
 #define READPOLICY_H_
 
 #include <iostream>
+#include <exception>
+using namespace std;
 
-class ReadDefaultValuePolicy {
-protected:
-	template<typename T>
-	static T read(T &data, unsigned &start, unsigned &end) {
-		return data[end];
+class ReadErrorException: public exception {
+	virtual const char* what() const throw () {
+		return "reading error";
 	}
+} ReadErrorException;
+
+template<typename T>
+struct ReadErrorPolicyDefaultValue
+{
+    static T HANDLE_ERROR()
+    {
+        return T();
+    }
 };
 
-class ReadExceptionPolicy {
-protected:
-	template<typename T>
-	static T read(T &data, unsigned &start, unsigned &end) {
-		if (start == end) {
-			throw "Read Exception";
-		} else {
-			return data[end];
-		}
-	}
+template<typename T>
+struct ReadErrorPolicyException
+{
+    static T HANDLE_ERROR()
+    {
+        throw ReadErrorException;
+    }
 };
 
 #endif /* READPOLICY_H_ */
