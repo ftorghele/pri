@@ -10,47 +10,71 @@
 #ifndef CACHE_H_
 #define CACHE_H_
 
-#include "ringbuffer.h"
-#include "readpolicy.h"
-#include "writepolicy.h"
-
 #include <string>
 
 typedef enum {
 	direct_mapped, fully_associative, set_associative
 } ASSOCIATIVITY;
 
+struct CacheLine {
+	std::string tag;
+};
+
 class Cache {
 
 public:
 
 	Cache(unsigned _size, unsigned _lineSize, ASSOCIATIVITY _associativity,
-			unsigned _associativityLevel = 0) : size(_size), lineSize(_lineSize),
-			associativity(_associativity), associativityLevel(_associativityLevel) {
+			unsigned _associativityLevel = 1) : size(_size), lineSize(_lineSize),
+			associativity(_associativity), associativityLevel(_associativityLevel),
+			numSets((_size/_lineSize) / _associativityLevel) {
 
-		//TODO Ringbuffer?
+		storage = new CacheLine*[numSets];
+		for (unsigned i = 0 ; i < numSets ; i++) storage[i] = new CacheLine[associativityLevel];
 
+		hitRate = missRate = usedCacheLines = 0;
+
+	}
+
+	~Cache() {
+		for (unsigned i = 0; i < numSets; i++) delete [] storage[i];
+		delete [] storage;
 	}
 
 	void read(unsigned addr, unsigned size) {
 		std::cout << "read\t" << addr << "\t" << size << std::endl;
 	}
 	void store(unsigned addr, unsigned size) {
-		std::cout << "read\t" << addr << "\t" << size << std::endl;
+		std::cout << "store\t" << addr << "\t" << size << std::endl;
 	}
 	void load(unsigned addr, unsigned size) {
-		std::cout << "read\t" << addr << "\t" << size << std::endl;
+		std::cout << "load\t" << addr << "\t" << size << std::endl;
 	}
 	void modify(unsigned addr, unsigned size) {
-		std::cout << "read\t" << addr << "\t" << size << std::endl;
+		std::cout << "modify\t" << addr << "\t" << size << std::endl;
+	}
+
+	unsigned getHitRate() {
+		return hitRate;
+	}
+
+	unsigned getMissRate() {
+		return missRate;
+	}
+
+	unsigned getUsedCacheLines() {
+		return usedCacheLines;
 	}
 
 private:
-
+	CacheLine **storage;
 	unsigned size;
 	unsigned lineSize;
 	ASSOCIATIVITY associativity;
 	unsigned associativityLevel;
+	unsigned numSets;
+
+	unsigned hitRate, missRate, usedCacheLines;
 
 };
 
