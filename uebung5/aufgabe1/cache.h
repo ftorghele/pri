@@ -11,13 +11,16 @@
 #define CACHE_H_
 
 #include <string>
+#include <math.h>
+#include <map>
 
 typedef enum {
 	direct_mapped, fully_associative, set_associative
 } ASSOCIATIVITY;
 
 struct CacheLine {
-	std::string tag;
+	CacheLine() : valid(0) {}
+	bool valid;
 };
 
 class Cache {
@@ -25,33 +28,55 @@ class Cache {
 public:
 
 	Cache(unsigned _size, unsigned _lineSize, ASSOCIATIVITY _associativity,
-			unsigned _associativityLevel = 1) : size(_size), lineSize(_lineSize),
-			associativity(_associativity), associativityLevel(_associativityLevel),
-			numSets((_size/_lineSize) / _associativityLevel) {
+			unsigned _associativityLevel = 1, unsigned _addrSize = 32) : size(_size), lineSize(_lineSize),
+			associativity(_associativity), associativityLevel(_associativityLevel), addrSize(_addrSize) {
 
-		storage = new CacheLine*[numSets];
-		for (unsigned i = 0 ; i < numSets ; i++) storage[i] = new CacheLine[associativityLevel];
+		numSets = (size/lineSize) / associativityLevel;
+		numCacheLines = size / lineSize;
+
+		switch(associativity){
+			case direct_mapped : indexSize = log(numCacheLines) / log(2); break;
+			case fully_associative : indexSize = 0; break;
+			case set_associative : indexSize = (log(numCacheLines / numSets) / log(2));	break;
+		}
+
+		offsetSize = log(addrSize) / log(2);
+		tagSize = addrSize - offsetSize - indexSize;
 
 		hitRate = missRate = usedCacheLines = 0;
 
 	}
 
-	~Cache() {
-		for (unsigned i = 0; i < numSets; i++) delete [] storage[i];
-		delete [] storage;
-	}
+	void read(std::string addr, unsigned size) {
 
-	void read(unsigned addr, unsigned size) {
-		std::cout << "read\t" << addr << "\t" << size << std::endl;
+		std::string tag = addr.substr(0, tagSize);
+		std::string index = addr.substr(tagSize - 1, indexSize);
+		std::string offset = addr.substr(tagSize + indexSize - 1, offsetSize);
+
+		if(storage[index][tag].valid) hitRate++;
+		else missRate++;
 	}
-	void store(unsigned addr, unsigned size) {
-		std::cout << "store\t" << addr << "\t" << size << std::endl;
+	void store(std::string addr, unsigned size) {
+
+		std::string tag = addr.substr(0, tagSize);
+		std::string index = addr.substr(tagSize - 1, indexSize);
+		std::string offset = addr.substr(tagSize + indexSize - 1, offsetSize);
+
+		storage[index][tag].valid = true;
+
+		usedCacheLines++;
+
 	}
-	void load(unsigned addr, unsigned size) {
-		std::cout << "load\t" << addr << "\t" << size << std::endl;
+	void load(std::string addr, unsigned size) {
+
+		read(addr, size);
+
 	}
-	void modify(unsigned addr, unsigned size) {
-		std::cout << "modify\t" << addr << "\t" << size << std::endl;
+	void modify(std::string addr, unsigned size) {
+
+
+		store(addr, size);
+
 	}
 
 	unsigned getHitRate() {
@@ -67,12 +92,17 @@ public:
 	}
 
 private:
-	CacheLine **storage;
+
+	std::map<std::string, std::map<std::string, CacheLine> > storage;
+
 	unsigned size;
 	unsigned lineSize;
 	ASSOCIATIVITY associativity;
 	unsigned associativityLevel;
 	unsigned numSets;
+	unsigned numCacheLines;
+
+	unsigned addrSize, tagSize, indexSize, offsetSize;
 
 	unsigned hitRate, missRate, usedCacheLines;
 

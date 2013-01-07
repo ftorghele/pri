@@ -10,4 +10,4 @@ clean:
 	rm -f cachesim
 
 valgrind:
-	valgrind --leak-check=yes ./cachesim
+	valgrind --leak-check=yes ./cachesim trace-ls.txt
